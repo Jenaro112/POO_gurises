@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MapamundiApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MapamundiApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MapamundiApplication.class, args);
+    }
 
 }
+
+//TODO : Agregar un diseño para interactuar con la api
