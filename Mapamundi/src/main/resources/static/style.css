@@ -175,3 +175,27 @@ section.mapa {
 #mapaMundi:hover {
     transform: scale(1.02);
 }
+
+/* Estilo base para países resaltados */
+.resaltado path,
+.resaltado polygon,
+.resaltado rect,
+.resaltado circle {
+    transition: fill 0.5s ease, filter 0.5s ease;
+}
+
+/* Glow ROJO para país grande */
+.glow-red path,
+.glow-red polygon,
+.glow-red rect,
+.glow-red circle {
+    filter: drop-shadow(0 0 6px red);
+}
+
+/* Glow AZUL para país chico */
+.glow-blue path,
+.glow-blue polygon,
+.glow-blue rect,
+.glow-blue circle {
+    filter: drop-shadow(0 0 6px dodgerblue);
+}

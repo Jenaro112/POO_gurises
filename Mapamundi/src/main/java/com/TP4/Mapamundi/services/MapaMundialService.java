@@ -82,13 +82,15 @@ public class MapaMundialService {
                 .filter(p -> p.getNombre().equalsIgnoreCase(pais1))
                 .findFirst()
                 .orElse(null);
-
+    
         Pais p2 = getTodosLosPaises().stream()
                 .filter(p -> p.getNombre().equalsIgnoreCase(pais2))
                 .findFirst()
                 .orElse(null);
-
+    
         if (p1 == null || p2 == null) return null;
-
-        return p1.getSuperficie() >= p2.getSuperficie() ? p1 : p2;}
+    
+        return p1.getSuperficie() >= p2.getSuperficie() ? p1 : p2;
+    }
+    
     }

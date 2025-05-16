@@ -52,8 +52,8 @@ public class MapaMundialController {
     // Comparar dos países por superficie
     @GetMapping("/comparar")
     public Pais compararPaises(@RequestParam String pais1, @RequestParam String pais2) {
-        return service.compararSuperficie(pais1, pais2);}
-    }
+        return service.compararSuperficie(pais1, pais2);    }
+}
 
 
 //! USAR ESTAS URL PARA VER SI ANDAN :)

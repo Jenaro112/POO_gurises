@@ -42,19 +42,25 @@ const continentes = {
   ]
 };
 
-// Función para resaltar un país (grupo <g>)
-function resaltarPais(nombre) {
+// Función para limpiar resaltados previos en el SVG
+function limpiarResaltado() {
   const svg = document.getElementById('mapaMundi').contentDocument;
   if (!svg) return;
 
-  // Quitar resaltado anterior
-  const resaltados = svg.querySelectorAll('.resaltado');
+  const resaltados = svg.querySelectorAll('.resaltado, .glow-red, .glow-blue');
   resaltados.forEach(g => {
-    g.classList.remove('resaltado');
+    g.classList.remove('resaltado', 'glow-red', 'glow-blue');
     g.querySelectorAll('path, polygon, rect, circle').forEach(el => {
       el.style.fill = '';
+      el.style.filter = '';
     });
   });
+}
+
+// Función para resaltar un país con color y glow
+function resaltarPais(nombre, color = 'red') {
+  const svg = document.getElementById('mapaMundi').contentDocument;
+  if (!svg) return;
 
   const id = mapaSVG[nombre];
   if (!id) return;
@@ -62,24 +68,25 @@ function resaltarPais(nombre) {
   const grupo = svg.getElementById(id);
   if (!grupo) return;
 
-  grupo.classList.add('resaltado');
   grupo.querySelectorAll('path, polygon, rect, circle').forEach(el => {
-    el.style.fill = 'red';
+    el.style.fill = color;
   });
+
+  grupo.classList.add('resaltado');
+
+  if (color === 'red') {
+    grupo.classList.add('glow-red');
+  } else if (color === 'blue' || color === 'dodgerblue') {
+    grupo.classList.add('glow-blue');
+  }
 }
 
+// Función para resaltar todos los países de un continente
 function resaltarContinente(nombreContinente) {
   const svg = document.getElementById('mapaMundi').contentDocument;
   if (!svg) return;
 
-  // Quitar resaltados previos
-  const resaltados = svg.querySelectorAll('.resaltado');
-  resaltados.forEach(g => {
-    g.classList.remove('resaltado');
-    g.querySelectorAll('path, polygon, rect, circle').forEach(el => {
-      el.style.fill = '';
-    });
-  });
+  limpiarResaltado();
 
   const paisesIds = continentes[nombreContinente];
   if (!paisesIds) return;
@@ -95,12 +102,10 @@ function resaltarContinente(nombreContinente) {
   });
 }
 
-
-// Cargar todos los países en los selects para comparar
-// Listar todos los países ordenados por superficie
+// Cargar todos los países en el listado ordenado
 async function listarPaises() {
   const listaPaises = document.getElementById('listaPaises');
-  listaPaises.innerHTML = ''; // Limpiar lista antes de llenar
+  listaPaises.innerHTML = '';
   try {
     const res = await fetch(`${apiBase}/paisesOrdenados`);
     if (!res.ok) {
@@ -150,7 +155,6 @@ async function cargarTodosLosPaises() {
     console.error(e);
   }
 }
-
 
 // Buscar países o provincias según input
 async function buscar() {
@@ -207,9 +211,10 @@ async function buscar() {
   }
 }
 
-
-// Comparar dos países por superficie
+// Comparar dos países por superficie con resaltado de glow
 async function comparar() {
+  console.log("Botón comparar clickeado");
+
   const p1 = document.getElementById('pais1').value;
   const p2 = document.getElementById('pais2').value;
   const resElem = document.getElementById('resultadoComparacion');
@@ -227,18 +232,20 @@ async function comparar() {
 
   try {
     const res = await fetch(`${apiBase}/comparar?pais1=${encodeURIComponent(p1)}&pais2=${encodeURIComponent(p2)}`);
-    if (res.status !== 200) {
+    if (!res.ok) {
       resElem.textContent = 'No se pudo obtener la comparación.';
       return;
     }
-    const paisMasGrande = await res.json();
-    if (!paisMasGrande) {
-      resElem.textContent = 'No se pudo determinar el país más grande.';
-      return;
-    }
-    resElem.textContent = `El país más grande es: ${paisMasGrande.nombre} con ${paisMasGrande.superficie} km²`;
 
-    resaltarPais(paisMasGrande.nombre);
+    const mayor = await res.json();
+    const menor = (mayor.nombre === p1) ? p2 : p1;
+
+    resElem.textContent = `El país más grande es: ${mayor.nombre} con ${mayor.superficie} km²`;
+
+    limpiarResaltado();
+    resaltarPais(mayor.nombre, 'red');   // 🔴 grande
+    resaltarPais(menor, 'dodgerblue');   // 🔵 chico
+
   } catch (e) {
     resElem.textContent = 'Error al comparar países.';
     console.error(e);
@@ -260,7 +267,3 @@ function intentarCargarPaises() {
 window.onload = () => {
   intentarCargarPaises();
 };
-
-
-
-// TODO: Me gustaria agregar, que al elegir un pais, se vean sus limitrofes en otro color, y que al tocar un pais en el mapa, se ve su info.
