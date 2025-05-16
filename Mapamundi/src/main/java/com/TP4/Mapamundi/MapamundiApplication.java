@@ -11,5 +11,3 @@ public class MapamundiApplication {
     }
 
 }
-
-//TODO : Agregar un diseño para interactuar con la api

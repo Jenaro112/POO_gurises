@@ -199,3 +199,19 @@ section.mapa {
 .glow-blue circle {
     filter: drop-shadow(0 0 6px dodgerblue);
 }
+
+#tooltip {
+    position: fixed;
+        pointer-events: none;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: 'Cormorant Garamond', serif;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}

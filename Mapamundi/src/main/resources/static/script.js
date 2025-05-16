@@ -264,6 +264,61 @@ function intentarCargarPaises() {
   }
 }
 
+// Obtenemos referencia al tooltip
+const tooltip = document.getElementById('tooltip');
+
+function mostrarTooltip(evt, texto) {
+  tooltip.style.opacity = '1';
+  tooltip.textContent = texto;
+
+  const padding = 10;
+
+  // Usamos clientX/clientY en vez de pageX/pageY para evitar problemas con scroll
+  let x = evt.clientX + padding;
+  let y = evt.clientY + padding;
+
+  const tooltipRect = tooltip.getBoundingClientRect();
+
+  if (x + tooltipRect.width > window.innerWidth) {
+    x = evt.clientX - tooltipRect.width - padding;
+  }
+  if (y + tooltipRect.height > window.innerHeight) {
+    y = evt.clientY - tooltipRect.height - padding;
+  }
+
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+
+function agregarEventosTooltip() {
+  const svg = document.getElementById('mapaMundi').contentDocument;
+  if (!svg) return;
+
+  Object.entries(mapaSVG).forEach(([nombre, id]) => {
+    const grupo = svg.getElementById(id);
+    if (grupo) {
+      grupo.addEventListener('mousemove', (evt) => {
+        mostrarTooltip(evt, nombre);
+      });
+      grupo.addEventListener('mouseleave', () => {
+        ocultarTooltip();
+      });
+    }
+  });
+}
+
+// Esperar que el SVG cargue y luego agregar eventos
+function intentarAgregarTooltip() {
+  const mapaObj = document.getElementById('mapaMundi');
+  if (mapaObj && mapaObj.contentDocument) {
+    agregarEventosTooltip();
+  } else {
+    setTimeout(intentarAgregarTooltip, 200);
+  }
+}
+
 window.onload = () => {
   intentarCargarPaises();
+  intentarAgregarTooltip();
 };
