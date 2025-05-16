@@ -148,9 +148,7 @@ h4 {
     transition: fill 0.4s ease;
 }
 
-/* Opcional: efecto hover para el país resaltado */
 .resaltado:hover {
-    fill: #ff4d4d !important;
     cursor: pointer;
 }
 
