@@ -5,45 +5,49 @@
     <meta charset="UTF-8" />
     <title>MapaMundi</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="script.js"></script>
 </head>
 
 <body>
     <h1>MapaMundi</h1>
 
-    <section>
+    <section class="busqueda">
         <label for="inputNombre">Ingrese nombre de Continente o País:</label>
-        <input type="text" id="inputNombre" placeholder="Ejemplo: America o Argentina" />
+        <input type="text" id="inputNombre" placeholder="Ejemplo: América o Argentina" />
         <button onclick="buscar()">Buscar</button>
 
         <h3>Resultados:</h3>
         <ul id="resultadoBusqueda"></ul>
     </section>
 
+    <section class="mapa">
+        <h3>Mapa del mundo</h3>
+        <object type="image/svg+xml" data="mapa.svg" id="mapaMundi"></object>
+    </section>
+
     <section>
         <button onclick="listarPaises()">Listar todos los países ordenados por superficie</button>
-        <h3>Países ordenados:</h3>
         <ul id="listaPaises"></ul>
     </section>
 
     <section>
-        <h3>Comparar dos países por superficie</h3>
+        <h3>Comparar dos países</h3>
         <div class="flex-row">
             <label for="pais1">País 1:</label>
             <select id="pais1">
-                <option value="">Pais 1</option>
+                <option value="">Seleccione...</option>
             </select>
         </div>
         <div class="flex-row">
             <label for="pais2">País 2:</label>
             <select id="pais2">
-                <option value="">Pais 2</option>
+                <option value="">Seleccione...</option>
             </select>
         </div>
         <button onclick="comparar()">Comparar</button>
-
         <h4 id="resultadoComparacion"></h4>
     </section>
+
+    <script src="script.js"></script>
 </body>
 
 </html>

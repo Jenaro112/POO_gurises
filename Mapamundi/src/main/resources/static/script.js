@@ -1,6 +1,40 @@
 const apiBase = '/mapa';
 
-// Cargar todos los países para ambos selects (pais1 y pais2)
+// Diccionario: nombre del país → ID en el SVG
+const mapaSVG = {
+  "Argentina": "ar",
+  "Brasil": "br",
+  "Uruguay": "uy",
+  "España": "es",
+  "Estados Unidos": "us",
+  "Francia": "fr",
+  "Alemania": "de",
+  "Italia": "it"
+  // Agregá más según los países que uses
+};
+
+// 🔴 Resaltar país en el SVG
+function resaltarPais(nombre) {
+  const svg = document.getElementById('mapaMundi').contentDocument;
+  if (!svg) return;
+
+  // Quitar clase 'resaltado' y estilos inline previos
+  const resaltados = svg.querySelectorAll('.resaltado');
+  resaltados.forEach(el => {
+    el.classList.remove('resaltado');
+    el.style.fill = ''; // elimina el fill inline para volver al original
+  });
+
+  const id = mapaSVG[nombre];
+  if (!id) return;
+
+  const pais = svg.getElementById(id);
+  if (pais) {
+    pais.classList.add('resaltado');
+  }
+}
+
+// 🌎 Cargar todos los países en los selects
 async function cargarTodosLosPaises() {
   try {
     const res = await fetch(`${apiBase}/paisesTodos`);
@@ -28,7 +62,7 @@ async function cargarTodosLosPaises() {
   }
 }
 
-// Buscar países o provincias según lo ingresado
+// 🔍 Buscar países o provincias
 async function buscar() {
   const nombre = document.getElementById('inputNombre').value.trim();
   const resultado = document.getElementById('resultadoBusqueda');
@@ -40,6 +74,8 @@ async function buscar() {
   }
 
   try {
+    resaltarPais(nombre);
+
     let res = await fetch(`${apiBase}/paises?continente=${encodeURIComponent(nombre)}`);
     if (res.status === 200) {
       const paises = await res.json();
@@ -73,7 +109,7 @@ async function buscar() {
   }
 }
 
-// Listar todos los países ordenados por superficie
+// 📋 Listar países ordenados por superficie
 async function listarPaises() {
   const listaPaises = document.getElementById('listaPaises');
   listaPaises.innerHTML = '';
@@ -95,7 +131,7 @@ async function listarPaises() {
   }
 }
 
-// Comparar dos países y mostrar el más grande
+// ⚖️ Comparar dos países
 async function comparar() {
   const p1 = document.getElementById('pais1').value;
   const p2 = document.getElementById('pais2').value;
@@ -124,13 +160,15 @@ async function comparar() {
       return;
     }
     resElem.textContent = `El país más grande es: ${paisMasGrande.nombre} con ${paisMasGrande.superficie} km²`;
+
+    resaltarPais(paisMasGrande.nombre);
   } catch (e) {
     resElem.textContent = 'Error al comparar países.';
     console.error(e);
   }
 }
 
-// Ejecutar al cargar la página
+// 🚀 Iniciar todo
 window.onload = () => {
   cargarTodosLosPaises();
 };
