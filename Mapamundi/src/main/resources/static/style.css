@@ -1,217 +1,131 @@
-/* Import classic serif font for atlas feel */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap');
-
-/* Color palette - warm parchment and muted antique tones */
-:root {
-    --bg-parchment: #f1e6d8;
-    --text-dark: #4a3c2b;
-    --accent-color: #654321;
-    --accent-light: #a1835e;
-    --input-bg: #e7dcca;
-    --input-bg-focus: #d5c9af;
-    --button-bg: #7b5e2e;
-    --button-bg-hover: #9f7f3f;
-    --section-bg: rgba(241, 230, 216, 0.9);
-    --border-color: #a7906e;
-}
-
-/* General body styles */
+/* Fuentes */
 body {
-    font-family: 'Cormorant Garamond', serif;
-    background-color: var(--bg-parchment);
-    color: var(--text-dark);
+    font-family: 'Roboto', sans-serif;
+    background-color: #fdf6e3;
     margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 0;
+    color: #333;
 }
 
-/* Main title */
-h1 {
-    font-size: 3em;
-    font-weight: 700;
-    margin-bottom: 30px;
-    letter-spacing: 2px;
-    text-shadow: 1px 1px 2px var(--accent-light);
-    animation: fadeGlow 3s ease-in-out infinite alternate;
+h1,
+h2 {
+    font-family: 'Playfair Display', serif;
+    color: #2c3e50;
 }
 
-/* Section container with subtle parchment tinted background and border */
-section {
-    background: var(--section-bg);
-    border: 1.5px solid var(--border-color);
-    border-radius: 12px;
-    padding: 25px 30px;
-    margin: 15px 0;
-    width: 100%;
-    max-width: 650px;
-    box-shadow: 2px 2px 8px rgba(106, 85, 35, 0.15);
-    transition: transform 0.3s ease;
-}
-
-section:hover {
-    transform: scale(1.02);
-}
-
-/* Form and label styling */
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-/* Inputs and selects with parchment background and neat serif text */
-input[type="text"],
-select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border-color);
-    border-radius: 6px;
-    background: var(--input-bg);
-    color: var(--text-dark);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1em;
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-input[type="text"]:focus,
-select:focus {
-    background: var(--input-bg-focus);
-    outline: none;
-    border-color: var(--accent-color);
-}
-
-/* Buttons with antique warm browns, subtle shadows and hover scaling */
+p,
+li,
+input,
+select,
 button {
-    background-color: var(--button-bg);
-    color: var(--section-bg);
-    border: none;
-    border-radius: 8px;
-    padding: 12px 22px;
-    font-size: 1.05em;
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 1px 1px 5px rgba(107, 85, 32, 0.5);
-    transition: background-color 0.25s ease, transform 0.2s ease;
+    font-family: 'Merriweather', serif;
 }
 
-button:hover {
-    background-color: var(--button-bg-hover);
-    transform: scale(1.07);
+/* Header */
+.main-header {
+    background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+    text-align: center;
+    padding: 2rem;
+    border-bottom: 2px solid #ccc;
 }
 
-/* Headings within sections */
-h3,
-h4 {
-    font-weight: 600;
-    color: var(--accent-color);
-    margin-top: 0;
-    margin-bottom: 12px;
-    letter-spacing: 1px;
+/* Secciones */
+main {
+    padding: 2rem;
 }
 
-/* Flex container for comparison select fields */
-.flex-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
+section {
+    margin-bottom: 2rem;
 }
 
-/* Add some spacing for label and select alignment */
-.flex-row label {
-    flex: 1 1 30%;
-}
-
-/* Select field styling within flex-row: flex grow */
-.flex-row select {
-    flex: 1 1 65%;
-}
-
-/* Subtle animation for main heading */
-@keyframes fadeGlow {
-    0% {
-        text-shadow: 1px 1px 2px var(--accent-light);
-    }
-
-    100% {
-        text-shadow: 2px 2px 5px var(--accent-color);
-    }
-}
-
-/* Clase para el país resaltado en rojo */
-.resaltado {
-    fill: red !important;
-    transition: fill 0.4s ease;
-}
-
-.resaltado:hover {
-    cursor: pointer;
-}
-
-/* Ajustes para el mapa SVG */
-section.mapa {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 100%;
-    overflow-x: auto;
-    padding: 15px;
+/* Mapa */
+.mapa-section {
+    position: relative;
+    text-align: center;
 }
 
 #mapaMundi {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    box-shadow: 3px 3px 10px rgba(106, 85, 35, 0.25);
-    transition: transform 0.3s ease;
+    width: 80%;
+    max-width: 800px;
+    border: 2px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#mapaMundi:hover {
-    transform: scale(1.02);
-}
-
-/* Estilo base para países resaltados */
-.resaltado path,
-.resaltado polygon,
-.resaltado rect,
-.resaltado circle {
-    transition: fill 0.5s ease, filter 0.5s ease;
-}
-
-/* Glow ROJO para país grande */
-.glow-red path,
-.glow-red polygon,
-.glow-red rect,
-.glow-red circle {
-    filter: drop-shadow(0 0 6px red);
-}
-
-/* Glow AZUL para país chico */
-.glow-blue path,
-.glow-blue polygon,
-.glow-blue rect,
-.glow-blue circle {
-    filter: drop-shadow(0 0 6px dodgerblue);
-}
-
-#tooltip {
+/* Tooltip */
+.tooltip {
     position: fixed;
-        pointer-events: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 5px;
     pointer-events: none;
-    background: rgba(0, 0, 0, 0.75);
-    color: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-family: 'Cormorant Garamond', serif;
-    white-space: nowrap;
     opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
+    transition: opacity 0.3s;
+    z-index: 10;
+}
+
+/* Inputs y botones */
+input,
+select {
+    padding: 0.5rem;
+    margin-right: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    background-color: #2c3e50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #34495e;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #ecf0f1;
+    border-top: 2px solid #ccc;
+    font-family: monospace;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 2rem;
+    border: 2px solid #888;
+    width: 80%;
+    max-width: 500px;
+    font-family: 'Merriweather', serif;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    background: #fffdf7;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+    color: #555;
+    cursor: pointer;
 }

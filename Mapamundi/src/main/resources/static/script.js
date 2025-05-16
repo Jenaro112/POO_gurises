@@ -1,6 +1,5 @@
 const apiBase = '/mapa';
 
-// Diccionario nombre -> id del grupo <g> en el SVG
 const mapaSVG = {
   "Argentina": "ar",
   "Brasil": "br",
@@ -10,39 +9,42 @@ const mapaSVG = {
   "Italia": "it",
   "Alemania": "de",
   "Estados Unidos": "us"
-  // Agregá más según lo que uses
 };
 
 const continentes = {
-  "América": [
-    "ar",    // Argentina
-    "br",    // Brasil
-    "uy",    // Uruguay
-    "us",    // Estados Unidos
-    "ca",    // Canadá (si está en el SVG)
-    "mx",    // México (si está)
-    "co",    // Colombia (si está)
-    "ve",    // Venezuela (si está)
-    "pe",    // Perú (si está)
-    "cl"     // Chile (si está)
-    // Agregá los que falten o no estén en el mapa
-  ],
-  "Europa": [
-    "es",    // España
-    "fr",    // Francia
-    "it",    // Italia
-    "de",    // Alemania
-    "gb",    // Reino Unido (si está)
-    "pt",    // Portugal (si está)
-    "nl",    // Países Bajos (si está)
-    "be",    // Bélgica (si está)
-    "pl",    // Polonia (si está)
-    "ru"     // Rusia (si está en la parte europea)
-    // Completar según SVG
-  ]
+  "América": ["ar", "br", "uy", "us", "ca", "mx", "co", "ve", "pe", "cl"],
+  "Europa": ["es", "fr", "it", "de", "gb", "pt", "nl", "be", "pl", "ru"]
 };
 
-// Función para limpiar resaltados previos en el SVG
+// Tooltip
+const tooltip = document.getElementById('tooltip');
+
+function mostrarTooltip(evt, texto) {
+  tooltip.style.opacity = '1';
+  tooltip.textContent = texto;
+
+  const padding = 10;
+  let x = evt.clientX + padding;
+  let y = evt.clientY + padding;
+  const tooltipRect = tooltip.getBoundingClientRect();
+
+  if (x + tooltipRect.width > window.innerWidth) {
+    x = evt.clientX - tooltipRect.width - padding;
+  }
+  if (y + tooltipRect.height > window.innerHeight) {
+    y = evt.clientY - tooltipRect.height - padding;
+  }
+
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function ocultarTooltip() {
+  tooltip.style.opacity = '0';
+  tooltip.textContent = '';
+}
+
+// Resaltado
 function limpiarResaltado() {
   const svg = document.getElementById('mapaMundi').contentDocument;
   if (!svg) return;
@@ -57,10 +59,11 @@ function limpiarResaltado() {
   });
 }
 
-// Función para resaltar un país con color y glow
 function resaltarPais(nombre, color = 'red') {
   const svg = document.getElementById('mapaMundi').contentDocument;
   if (!svg) return;
+
+  limpiarResaltado();
 
   const id = mapaSVG[nombre];
   if (!id) return;
@@ -73,25 +76,20 @@ function resaltarPais(nombre, color = 'red') {
   });
 
   grupo.classList.add('resaltado');
-
-  if (color === 'red') {
-    grupo.classList.add('glow-red');
-  } else if (color === 'blue' || color === 'dodgerblue') {
-    grupo.classList.add('glow-blue');
-  }
+  if (color === 'red') grupo.classList.add('glow-red');
+  if (color === 'blue') grupo.classList.add('glow-blue');
 }
 
-// Función para resaltar todos los países de un continente
-function resaltarContinente(nombreContinente) {
+function resaltarContinente(nombre) {
   const svg = document.getElementById('mapaMundi').contentDocument;
   if (!svg) return;
 
   limpiarResaltado();
 
-  const paisesIds = continentes[nombreContinente];
-  if (!paisesIds) return;
+  const ids = continentes[nombre];
+  if (!ids) return;
 
-  paisesIds.forEach(id => {
+  ids.forEach(id => {
     const grupo = svg.getElementById(id);
     if (grupo) {
       grupo.classList.add('resaltado');
@@ -102,61 +100,7 @@ function resaltarContinente(nombreContinente) {
   });
 }
 
-// Cargar todos los países en el listado ordenado
-async function listarPaises() {
-  const listaPaises = document.getElementById('listaPaises');
-  listaPaises.innerHTML = '';
-  try {
-    const res = await fetch(`${apiBase}/paisesOrdenados`);
-    if (!res.ok) {
-      listaPaises.textContent = 'No se pudo obtener la lista ordenada.';
-      return;
-    }
-    const paises = await res.json();
-    paises.forEach(p => {
-      const li = document.createElement('li');
-      li.textContent = `${p.nombre} - ${p.superficie} km²`;
-      listaPaises.appendChild(li);
-    });
-  } catch (e) {
-    listaPaises.textContent = 'Error al cargar países ordenados.';
-    console.error(e);
-  }
-}
-
-// Cargar todos los países para los selects de comparación
-async function cargarTodosLosPaises() {
-  try {
-    const res = await fetch(`${apiBase}/paisesTodos`);
-    if (!res.ok) {
-      alert('No se pudo cargar la lista de países.');
-      return;
-    }
-    const todosPaises = await res.json();
-
-    const select1 = document.getElementById('pais1');
-    const select2 = document.getElementById('pais2');
-    select1.innerHTML = '<option value="">Seleccione...</option>';
-    select2.innerHTML = '<option value="">Seleccione...</option>';
-
-    todosPaises.forEach(p => {
-      const option1 = document.createElement('option');
-      option1.value = p.nombre;
-      option1.textContent = p.nombre;
-      select1.appendChild(option1);
-
-      const option2 = document.createElement('option');
-      option2.value = p.nombre;
-      option2.textContent = p.nombre;
-      select2.appendChild(option2);
-    });
-  } catch (e) {
-    alert('Error cargando países para comparación.');
-    console.error(e);
-  }
-}
-
-// Buscar países o provincias según input
+// Buscar
 async function buscar() {
   const nombre = document.getElementById('inputNombre').value.trim();
   const resultado = document.getElementById('resultadoBusqueda');
@@ -167,19 +111,18 @@ async function buscar() {
     return;
   }
 
-  // Primero, si es un continente, resaltar continente y salir
   if (continentes[nombre]) {
     resaltarContinente(nombre);
     resultado.textContent = `Países resaltados del continente ${nombre}`;
     return;
   }
 
-  // Si no es continente, intentar país
   try {
+    limpiarResaltado();
     resaltarPais(nombre);
 
     let res = await fetch(`${apiBase}/paises?continente=${encodeURIComponent(nombre)}`);
-    if (res.status === 200) {
+    if (res.ok) {
       const paises = await res.json();
       if (paises.length > 0) {
         paises.forEach(p => {
@@ -192,12 +135,12 @@ async function buscar() {
     }
 
     res = await fetch(`${apiBase}/provincias?pais=${encodeURIComponent(nombre)}`);
-    if (res.status === 200) {
+    if (res.ok) {
       const provincias = await res.json();
       if (provincias.length > 0) {
-        provincias.forEach(pr => {
+        provincias.forEach(p => {
           const li = document.createElement('li');
-          li.textContent = pr.nombre;
+          li.textContent = p.nombre;
           resultado.appendChild(li);
         });
         return;
@@ -211,114 +154,172 @@ async function buscar() {
   }
 }
 
-// Comparar dos países por superficie con resaltado de glow
-async function comparar() {
-  console.log("Botón comparar clickeado");
+// Listar ordenados
+async function listarPaises() {
+  const lista = document.getElementById('listaPaises');
+  lista.innerHTML = '';
+  try {
+    const res = await fetch(`${apiBase}/paisesOrdenados`);
+    if (!res.ok) throw new Error();
+    const paises = await res.json();
+    paises.forEach(p => {
+      const li = document.createElement('li');
+      li.textContent = `${p.nombre} - ${p.superficie} km²`;
+      lista.appendChild(li);
+    });
+  } catch {
+    lista.textContent = 'Error al listar países.';
+  }
+}
 
+// Comparar países
+async function comparar() {
   const p1 = document.getElementById('pais1').value;
   const p2 = document.getElementById('pais2').value;
   const resElem = document.getElementById('resultadoComparacion');
   resElem.textContent = '';
 
-  if (!p1 || !p2) {
-    alert('Por favor seleccione ambos países para comparar.');
-    return;
-  }
-
-  if (p1 === p2) {
-    resElem.textContent = 'No se puede comparar un país consigo mismo.';
-    return;
-  }
+  if (!p1 || !p2) return alert("Seleccioná ambos países");
+  if (p1 === p2) return resElem.textContent = 'No se puede comparar un país consigo mismo.';
 
   try {
-    const res = await fetch(`${apiBase}/comparar?pais1=${encodeURIComponent(p1)}&pais2=${encodeURIComponent(p2)}`);
-    if (!res.ok) {
-      resElem.textContent = 'No se pudo obtener la comparación.';
-      return;
-    }
-
+    const res = await fetch(`${apiBase}/comparar?pais1=${p1}&pais2=${p2}`);
+    if (!res.ok) throw new Error();
     const mayor = await res.json();
-    const menor = (mayor.nombre === p1) ? p2 : p1;
+    const menor = mayor.nombre === p1 ? p2 : p1;
 
-    resElem.textContent = `El país más grande es: ${mayor.nombre} con ${mayor.superficie} km²`;
-
+    resElem.textContent = `🔴 ${mayor.nombre} es más grande con ${mayor.superficie} km²`;
     limpiarResaltado();
-    resaltarPais(mayor.nombre, 'red');   // 🔴 grande
-    resaltarPais(menor, 'dodgerblue');   // 🔵 chico
-
+    resaltarPais(mayor.nombre, 'red');
+    resaltarPais(menor, 'dodgerblue');
   } catch (e) {
-    resElem.textContent = 'Error al comparar países.';
+    resElem.textContent = 'Error al comparar.';
     console.error(e);
   }
 }
 
-function intentarCargarPaises() {
-  const mapaObj = document.getElementById('mapaMundi');
-
-  if (mapaObj && mapaObj.contentDocument) {
-    console.log("✅ El SVG está listo. Cargando países...");
-    cargarTodosLosPaises();
-  } else {
-    console.log("⏳ Esperando que el SVG cargue...");
-    setTimeout(intentarCargarPaises, 200); // Intenta cada 200ms
-  }
-}
-
-// Obtenemos referencia al tooltip
-const tooltip = document.getElementById('tooltip');
-
-function mostrarTooltip(evt, texto) {
-  tooltip.style.opacity = '1';
-  tooltip.textContent = texto;
-
-  const padding = 10;
-
-  // Usamos clientX/clientY en vez de pageX/pageY para evitar problemas con scroll
-  let x = evt.clientX + padding;
-  let y = evt.clientY + padding;
-
-  const tooltipRect = tooltip.getBoundingClientRect();
-
-  if (x + tooltipRect.width > window.innerWidth) {
-    x = evt.clientX - tooltipRect.width - padding;
-  }
-  if (y + tooltipRect.height > window.innerHeight) {
-    y = evt.clientY - tooltipRect.height - padding;
-  }
-
-  tooltip.style.left = x + 'px';
-  tooltip.style.top = y + 'px';
-}
-
-
+// Tooltip dinámico sobre SVG
 function agregarEventosTooltip() {
   const svg = document.getElementById('mapaMundi').contentDocument;
   if (!svg) return;
 
   Object.entries(mapaSVG).forEach(([nombre, id]) => {
     const grupo = svg.getElementById(id);
-    if (grupo) {
-      grupo.addEventListener('mousemove', (evt) => {
-        mostrarTooltip(evt, nombre);
-      });
-      grupo.addEventListener('mouseleave', () => {
-        ocultarTooltip();
-      });
-    }
+    if (!grupo) return;
+
+    grupo.addEventListener('mousemove', (evt) => mostrarTooltip(evt, nombre));
+    grupo.addEventListener('mouseleave', ocultarTooltip);
   });
 }
 
-// Esperar que el SVG cargue y luego agregar eventos
-function intentarAgregarTooltip() {
-  const mapaObj = document.getElementById('mapaMundi');
-  if (mapaObj && mapaObj.contentDocument) {
+// Inicialización
+function intentarIniciar() {
+  const svg = document.getElementById('mapaMundi');
+  if (svg && svg.contentDocument) {
+    cargarTodosLosPaises();
     agregarEventosTooltip();
   } else {
-    setTimeout(intentarAgregarTooltip, 200);
+    setTimeout(intentarIniciar, 300);
   }
 }
 
-window.onload = () => {
-  intentarCargarPaises();
-  intentarAgregarTooltip();
+async function cargarTodosLosPaises() {
+  try {
+    const res = await fetch(`${apiBase}/paisesTodos`);
+    if (!res.ok) throw new Error();
+    const paises = await res.json();
+    const select1 = document.getElementById('pais1');
+    const select2 = document.getElementById('pais2');
+    select1.innerHTML = '<option value="">Seleccione...</option>';
+    select2.innerHTML = '<option value="">Seleccione...</option>';
+    paises.forEach(p => {
+      const o1 = document.createElement('option');
+      o1.value = p.nombre;
+      o1.textContent = p.nombre;
+      const o2 = o1.cloneNode(true);
+      select1.appendChild(o1);
+      select2.appendChild(o2);
+    });
+  } catch (e) {
+    alert('Error al cargar países.');
+    console.error(e);
+  }
+}
+
+window.onload = intentarIniciar;
+
+
+function abrirModal(nombre) {
+  const modal = document.getElementById('modalPais');
+  const nombreElem = document.getElementById('modalNombrePais');
+  const capitalElem = document.getElementById('modalCapital');
+  const superficieElem = document.getElementById('modalSuperficie');
+  const provinciasElem = document.getElementById('modalProvincias');
+
+  nombreElem.textContent = '';
+  capitalElem.textContent = '';
+  superficieElem.textContent = '';
+  provinciasElem.innerHTML = '';
+
+  // Intentar cargar como país
+  fetch(`${apiBase}/provincias?pais=${encodeURIComponent(nombre)}`)
+    .then(res => res.ok ? res.json() : [])
+    .then(provincias => {
+      provincias.forEach(p => {
+        const li = document.createElement('li');
+        li.textContent = p.nombre;
+        provinciasElem.appendChild(li);
+      });
+    });
+
+  fetch(`${apiBase}/paisesTodos`)
+    .then(res => res.ok ? res.json() : [])
+    .then(paises => {
+      const pais = paises.find(p => p.nombre === nombre);
+      if (pais) {
+        nombreElem.textContent = pais.nombre;
+        capitalElem.textContent = pais.capital;
+        superficieElem.textContent = pais.superficie;
+      }
+    });
+
+  modal.style.display = 'block';
+}
+
+// Cerrar modal
+document.getElementById('cerrarModal').onclick = () => {
+  document.getElementById('modalPais').style.display = 'none';
 };
+
+// Click fuera del modal lo cierra
+window.onclick = (event) => {
+  const modal = document.getElementById('modalPais');
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+};
+
+// Asociar clics en el mapa
+function agregarEventosModal() {
+  const svg = document.getElementById('mapaMundi').contentDocument;
+  if (!svg) return;
+
+  Object.entries(mapaSVG).forEach(([nombre, id]) => {
+    const grupo = svg.getElementById(id);
+    if (!grupo) return;
+
+    grupo.addEventListener('click', () => abrirModal(nombre));
+  });
+}
+
+// Ya estaba:
+function intentarIniciar() {
+  const svg = document.getElementById('mapaMundi');
+  if (svg && svg.contentDocument) {
+    cargarTodosLosPaises();
+    agregarEventosTooltip();
+    agregarEventosModal(); // ✅ Esto suma el modal
+  } else {
+    setTimeout(intentarIniciar, 300);
+  }
+}

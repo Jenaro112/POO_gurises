@@ -3,50 +3,61 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>MapaMundi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌍 MapaMundi Interactivo</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto&family=Merriweather&display=swap"
+        rel="stylesheet">
 </head>
+<!-- Modal -->
+<div id="modalPais" class="modal">
+    <div class="modal-content">
+        <span id="cerrarModal" class="close">&times;</span>
+        <h2 id="modalNombrePais"></h2>
+        <p><strong>Capital:</strong> <span id="modalCapital"></span></p>
+        <p><strong>Superficie:</strong> <span id="modalSuperficie"></span> km²</p>
+        <p><strong>Provincias:</strong></p>
+        <ul id="modalProvincias"></ul>
+    </div>
+</div>
 
 <body>
-    <h1>MapaMundi</h1>
+    <header class="main-header">
+        <h1>🌍 MapaMundi Interactivo</h1>
+        <p>Explorá continentes, países y sus provincias desde tu navegador</p>
+    </header>
 
-    <section class="busqueda">
-        <label for="inputNombre">Ingrese nombre de Continente o País:</label>
-        <input type="text" id="inputNombre" placeholder="Ejemplo: América o Argentina" />
-        <button onclick="buscar()">Buscar</button>
+    <main>
+        <section class="mapa-section">
+            <object id="mapaMundi" type="image/svg+xml" data="mapa.svg"></object>
+            <div id="tooltip" class="tooltip"></div>
+        </section>
 
-        <h3>Resultados:</h3>
-        <ul id="resultadoBusqueda"></ul>
-    </section>
+        <section class="busqueda-section">
+            <h2>🔎 Buscar País o Continente</h2>
+            <input type="text" id="inputNombre" placeholder="Ejemplo: Argentina o Europa" />
+            <button onclick="buscar()">Buscar</button>
+            <ul id="resultadoBusqueda"></ul>
+        </section>
 
-    <section class="mapa">
-        <h3>Mapa del mundo</h3>
-        <object type="image/svg+xml" data="mapa.svg" id="mapaMundi"></object>
-    </section>
+        <section class="comparacion-section">
+            <h2>⚖️ Comparar Países por Superficie</h2>
+            <select id="pais1"></select>
+            <select id="pais2"></select>
+            <button onclick="comparar()">Comparar</button>
+            <p id="resultadoComparacion"></p>
+        </section>
 
-    <section>
-        <button onclick="listarPaises()">Listar todos los países ordenados por superficie</button>
-        <ul id="listaPaises"></ul>
-    </section>
+        <section class="lista-section">
+            <h2>📋 Lista de Países por Superficie</h2>
+            <ul id="listaPaises"></ul>
+        </section>
+    </main>
 
-    <section>
-        <h3>Comparar dos países</h3>
-        <div class="flex-row">
-            <label for="pais1">País 1:</label>
-            <select id="pais1">
-                <option value="">Seleccione...</option>
-            </select>
-        </div>
-        <div class="flex-row">
-            <label for="pais2">País 2:</label>
-            <select id="pais2">
-                <option value="">Seleccione...</option>
-            </select>
-        </div>
-        <button onclick="comparar()">Comparar</button>
-        <h4 id="resultadoComparacion"></h4>
-    </section>
-    <div id="tooltip"></div>
+    <footer class="footer">
+        <p>TP4 POO — 2025</p>
+    </footer>
 
     <script src="script.js"></script>
 </body>
