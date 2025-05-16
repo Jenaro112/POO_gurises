@@ -60,4 +60,35 @@ public class MapaMundialService {
     public List<Continente> getTodosLosContinentes() {
         return continentes;
     }
-}
+        // 1. Obtener todos los países del mundo
+    public List<Pais> getTodosLosPaises() {
+        List<Pais> todos = new ArrayList<>();
+        for (Continente c : continentes) {
+            todos.addAll(c.getPaises());
+        }
+        return todos;
+    }
+
+    // 2. Ordenar países por superficie
+    public List<Pais> getPaisesOrdenadosPorSuperficie() {
+        List<Pais> todos = getTodosLosPaises();
+        todos.sort((p1, p2) -> Double.compare(p2.getSuperficie(), p1.getSuperficie())); // orden descendente
+        return todos;
+    }
+
+    // 3. Comparar dos países por superficie
+    public Pais compararSuperficie(String pais1, String pais2) {
+        Pais p1 = getTodosLosPaises().stream()
+                .filter(p -> p.getNombre().equalsIgnoreCase(pais1))
+                .findFirst()
+                .orElse(null);
+
+        Pais p2 = getTodosLosPaises().stream()
+                .filter(p -> p.getNombre().equalsIgnoreCase(pais2))
+                .findFirst()
+                .orElse(null);
+
+        if (p1 == null || p2 == null) return null;
+
+        return p1.getSuperficie() >= p2.getSuperficie() ? p1 : p2;}
+    }

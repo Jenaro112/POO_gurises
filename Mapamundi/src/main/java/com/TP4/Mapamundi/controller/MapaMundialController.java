@@ -36,7 +36,25 @@ public class MapaMundialController {
     public List<Provincia> getProvincias(@RequestParam String pais) {
         return service.getProvinciasDePais(pais);
     }
-}
+
+    // Obtener todos los países (para llenar los select)
+    @GetMapping("/paisesTodos")
+    public List<Pais> getTodosLosPaises() {
+        return service.getTodosLosPaises();
+    }
+
+    // Obtener países ordenados por superficie
+    @GetMapping("/paisesOrdenados")
+    public List<Pais> getPaisesOrdenados() {
+        return service.getPaisesOrdenadosPorSuperficie();
+    }
+
+    // Comparar dos países por superficie
+    @GetMapping("/comparar")
+    public Pais compararPaises(@RequestParam String pais1, @RequestParam String pais2) {
+        return service.compararSuperficie(pais1, pais2);}
+    }
+
 
 //! USAR ESTAS URL PARA VER SI ANDAN :)
 //* http://localhost:8080/mapa/continentes
