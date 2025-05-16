@@ -2,40 +2,165 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Mapa Mundial</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8" />
+    <title>MapaMundi</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <h1>Continentes</h1>
+    <h1>MapaMundi</h1>
 
-    <div class="botones">
-        <button onclick="cargarPaises('América')">América</button>
-        <button onclick="cargarPaises('Europa')">Europa</button>
-    </div>
+    <section>
+        <label for="inputNombre">Ingrese nombre de Continente o País:</label>
+        <input type="text" id="inputNombre" placeholder="Ejemplo: America o Argentina" />
+        <button onclick="buscar()">Buscar</button>
 
-    <h2>Países encontrados:</h2>
-    <ul id="paises"></ul>
+        <h3>Resultados:</h3>
+        <ul id="resultadoBusqueda"></ul>
+    </section>
+
+    <section>
+        <button onclick="listarPaises()">Listar todos los países ordenados por superficie</button>
+        <h3>Países ordenados:</h3>
+        <ul id="listaPaises"></ul>
+    </section>
+
+    <section>
+        <h3>Comparar dos países por superficie</h3>
+        <div class="flex-row">
+            <label for="pais1">País 1:</label>
+            <select id="pais1">
+                <option value="">Seleccione...</option>
+            </select>
+        </div>
+        <div class="flex-row">
+            <label for="pais2">País 2:</label>
+            <input type="text" id="pais2" placeholder="Ingrese nombre país" />
+        </div>
+        <button onclick="comparar()">Comparar</button>
+
+        <h4 id="resultadoComparacion"></h4>
+    </section>
 
     <script>
-        function cargarPaises(continente) {
-            fetch(`/mapa/paises?continente=${encodeURIComponent(continente)}`)
-            .then(res => res.json())
-                .then(data => {
-                    const lista = document.getElementById('paises');
-                    lista.innerHTML = '';
-                    data.forEach(pais => {
-                        const li = document.createElement('li');
-                        li.textContent = `${pais.nombre} (${pais.capital}) - ${pais.superficie} km²`;
-                        lista.appendChild(li);
-                    });
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('Error al obtener los países.');
+        const apiBase = '/mapa';
+
+        async function cargarPaisesSelect() {
+            try {
+                const res = await fetch(`${apiBase}/continentes`);
+                const continentes = await res.json();
+                let todosPaises = [];
+                for (const cont of continentes) {
+                    const resP = await fetch(`${apiBase}/paises?continente=${encodeURIComponent(cont)}`);
+                    const paises = await resP.json();
+                    todosPaises = todosPaises.concat(paises);
+                }
+                const select = document.getElementById('pais1');
+                todosPaises.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.nombre;
+                    option.textContent = p.nombre;
+                    select.appendChild(option);
                 });
+            } catch (e) {
+                alert('Error cargando países para comparación.');
+                console.error(e);
+            }
         }
+
+        async function buscar() {
+            const nombre = document.getElementById('inputNombre').value.trim();
+            const resultado = document.getElementById('resultadoBusqueda');
+            resultado.innerHTML = '';
+
+            if (!nombre) {
+                alert('Ingrese un nombre válido.');
+                return;
+            }
+
+            try {
+                let res = await fetch(`${apiBase}/paises?continente=${encodeURIComponent(nombre)}`);
+                if (res.status === 200) {
+                    const paises = await res.json();
+                    if (paises.length > 0) {
+                        paises.forEach(p => {
+                            const li = document.createElement('li');
+                            li.textContent = `${p.nombre} (Capital: ${p.capital}) - ${p.superficie} km²`;
+                            resultado.appendChild(li);
+                        });
+                        return;
+                    }
+                }
+                res = await fetch(`${apiBase}/provincias?pais=${encodeURIComponent(nombre)}`);
+                if (res.status === 200) {
+                    const provincias = await res.json();
+                    if (provincias.length > 0) {
+                        provincias.forEach(pr => {
+                            const li = document.createElement('li');
+                            li.textContent = pr.nombre;
+                            resultado.appendChild(li);
+                        });
+                        return;
+                    }
+                }
+                resultado.textContent = 'No se encontraron resultados.';
+            } catch (e) {
+                resultado.textContent = 'Error en la búsqueda.';
+                console.error(e);
+            }
+        }
+
+        async function listarPaises() {
+            const listaPaises = document.getElementById('listaPaises');
+            listaPaises.innerHTML = '';
+            try {
+                const res = await fetch(`${apiBase}/paisesOrdenados`);
+                if (res.status !== 200) {
+                    listaPaises.textContent = 'No se pudo obtener la lista ordenada.';
+                    return;
+                }
+                const paises = await res.json();
+                paises.forEach(p => {
+                    const li = document.createElement('li');
+                    li.textContent = `${p.nombre} - ${p.superficie} km²`;
+                    listaPaises.appendChild(li);
+                });
+            } catch (e) {
+                listaPaises.textContent = 'Error al cargar países ordenados.';
+                console.error(e);
+            }
+        }
+
+        async function comparar() {
+            const p1 = document.getElementById('pais1').value;
+            const p2 = document.getElementById('pais2').value.trim();
+            const resElem = document.getElementById('resultadoComparacion');
+            resElem.textContent = '';
+
+            if (!p1 || !p2) {
+                alert('Por favor ingrese ambos países para comparar.');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${apiBase}/comparar?pais1=${encodeURIComponent(p1)}&pais2=${encodeURIComponent(p2)}`);
+                if (res.status !== 200) {
+                    resElem.textContent = 'No se pudo obtener la comparación.';
+                    return;
+                }
+                const paisMasGrande = await res.json();
+                if (!paisMasGrande) {
+                    resElem.textContent = 'No se pudo determinar el país más grande.';
+                    return;
+                }
+                resElem.textContent = `El país más grande es: ${paisMasGrande.nombre} con ${paisMasGrande.superficie} km²`;
+            } catch (e) {
+                resElem.textContent = 'Error al comparar países.';
+                console.error(e);
+            }
+        }
+
+        cargarPaisesSelect();
     </script>
 </body>
 
