@@ -1,0 +1,42 @@
+body {
+    background-color: #121212;
+    color: #eee;
+    font-family: 'Courier New', monospace;
+    padding: 20px;
+}
+
+h1,
+h2 {
+    color: #00ffff;
+}
+
+.botones {
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #333;
+    color: #00ffff;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: #1e1e1e;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}

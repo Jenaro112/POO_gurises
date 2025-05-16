@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa Mundial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Continentes</h1>
+
+    <div class="botones">
+        <button onclick="cargarPaises('América')">América</button>
+        <button onclick="cargarPaises('Europa')">Europa</button>
+    </div>
+
+    <h2>Países encontrados:</h2>
+    <ul id="paises"></ul>
+
+    <script>
+        function cargarPaises(continente) {
+            fetch(`/mapa/paises?continente=${encodeURIComponent(continente)}`)
+            .then(res => res.json())
+                .then(data => {
+                    const lista = document.getElementById('paises');
+                    lista.innerHTML = '';
+                    data.forEach(pais => {
+                        const li = document.createElement('li');
+                        li.textContent = `${pais.nombre} (${pais.capital}) - ${pais.superficie} km²`;
+                        lista.appendChild(li);
+                    });
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Error al obtener los países.');
+                });
+        }
+    </script>
+</body>
+
+</html>
