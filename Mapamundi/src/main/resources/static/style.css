@@ -1,131 +1,154 @@
-/* Fuentes */
+/* Importing fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto&family=Merriweather&display=swap');
+
+/* Color Palette */
+:root {
+    --color-dark: #3e4e50;
+    /* Dark teal */
+    --color-light: #facfad;
+    /* Light peach */
+    --color-yellow: #f8bd7f;
+    /* Soft yellow */
+    --color-orange: #f5ac72;
+    /* Warm orange */
+    --color-red: #f2aa7e;
+    /* Soft coral */
+}
+
+/* General Styles */
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #fdf6e3;
+    background-color: var(--color-light);
+    color: var(--color-dark);
     margin: 0;
-    padding: 0;
-    color: #333;
+    padding: 20px;
 }
 
-h1,
-h2 {
-    font-family: 'Playfair Display', serif;
-    color: #2c3e50;
-}
-
-p,
-li,
-input,
-select,
-button {
-    font-family: 'Merriweather', serif;
-}
-
-/* Header */
+/* Header Styles */
 .main-header {
-    background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
     text-align: center;
-    padding: 2rem;
-    border-bottom: 2px solid #ccc;
+    margin-bottom: 30px;
 }
 
-/* Secciones */
-main {
-    padding: 2rem;
+.main-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5em;
+    color: var(--color-dark);
 }
 
+.main-header p {
+    font-size: 1.2em;
+    color: var(--color-dark);
+}
+
+/* Section Styles */
 section {
-    margin-bottom: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Mapa */
-.mapa-section {
-    position: relative;
-    text-align: center;
-}
-
-#mapaMundi {
-    width: 80%;
-    max-width: 800px;
-    border: 2px solid #ccc;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Tooltip */
+/* Tooltip Styles */
 .tooltip {
-    position: fixed;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 0.5rem;
+    position: absolute;
+    background-color: var(--color-dark);
+    color: white;
+    padding: 10px;
     border-radius: 5px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 10;
+    display: none;
+    /* Hidden by default */
 }
 
-/* Inputs y botones */
-input,
-select {
-    padding: 0.5rem;
-    margin-right: 1rem;
-    border: 1px solid #ccc;
+/* Input and Button Styles */
+input[type="text"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 1px solid var(--color-dark);
     border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 1em;
 }
 
 button {
-    padding: 0.5rem 1rem;
-    background-color: #2c3e50;
-    color: #fff;
+    background-color: var(--color-orange);
+    color: white;
     border: none;
     border-radius: 5px;
+    padding: 10px 15px;
     cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #34495e;
+    background-color: var(--color-yellow);
 }
 
-/* Footer */
+/* Comparison Section Styles */
+.comparacion-section select {
+    width: calc(50% - 10px);
+    padding: 10px;
+    border: 1px solid var(--color-dark);
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+/* Footer Styles */
 .footer {
     text-align: center;
-    padding: 1rem;
-    background-color: #ecf0f1;
-    border-top: 2px solid #ccc;
-    font-family: monospace;
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: var(--color-dark);
 }
 
-/* Modal */
+/* Modal Styles */
 .modal {
     display: none;
+    /* Hidden by default */
     position: fixed;
-    z-index: 999;
+    z-index: 1;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 2rem;
-    border: 2px solid #888;
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid var(--color-dark);
+    border-radius: 8px;
     width: 80%;
-    max-width: 500px;
-    font-family: 'Merriweather', serif;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    background: #fffdf7;
-    position: relative;
 }
 
 .close {
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    font-size: 1.5rem;
-    color: #555;
+    color: var(--color-dark);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--color-red);
+    text-decoration: none;
     cursor: pointer;
+}
+
+/* Additional Styles for Lists */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    background-color: var(--color-yellow);
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
 }
